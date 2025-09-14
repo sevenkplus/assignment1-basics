@@ -98,7 +98,7 @@ def test_multihead_self_attention_with_rope(
     q_proj_weight, k_proj_weight, v_proj_weight, o_proj_weight = [
         d[f"layers.0.attn.{k}_proj.weight"] for k in ["q", "k", "v", "output"]
     ]
-    pos_ids = rearrange(pos_ids, "seq -> 1 seq")
+    # pos_ids = rearrange(pos_ids, "seq -> 1 seq")
     actual_output = run_multihead_self_attention_with_rope(
         d_model=d_model,
         num_heads=n_heads,
