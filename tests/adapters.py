@@ -10,7 +10,8 @@ from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
 from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RoPE, scaled_dot_product_attention, MultiheadSelfAttention, SiLU, TransformerBlock, Transformer
-from cs336_basics.optimizer import cross_entropy, AdamW, get_lr_cosine_schedule
+from cs336_basics.optimizer import AdamW, get_lr_cosine_schedule, gradient_clipping
+from cs336_basics.utils import cross_entropy, softmax
 
 def run_linear(
     d_in: int,
@@ -481,7 +482,7 @@ def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, "
         Float[Tensor, "..."]: Tensor of with the same shape as `in_features` with the output of
         softmax normalizing the specified `dim`.
     """
-    raise NotImplementedError
+    return softmax(in_features, dim)
 
 
 def run_cross_entropy(
@@ -511,7 +512,7 @@ def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm:
 
     The gradients of the parameters (parameter.grad) should be modified in-place.
     """
-    raise NotImplementedError
+    return gradient_clipping(parameters, max_l2_norm)
 
 
 def get_adamw_cls() -> Any:

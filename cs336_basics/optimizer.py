@@ -2,19 +2,8 @@ from collections.abc import Callable, Iterable
 from typing import Optional
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
-import einx
 import math
-
-def cross_entropy(inputs, targets):
-    logits = einx.subtract(
-        "... vocab_size, ... -> ... vocab_size",
-        inputs,
-        einx.logsumexp("... [vocab_size]", inputs)
-    )
-    losses = -einx.get_at("... [vocab_size], ... -> ...", logits, targets)
-    return losses.mean()
 
 class SGD(optim.Optimizer):
     def __init__(self, params, lr=1e-3):
@@ -80,3 +69,14 @@ def get_lr_cosine_schedule(t: int, lr_max: float, lr_min: float, tw: int, tc: in
     if tw <= t <= tc:
         return lr_min + 1/2*(1+math.cos((t-tw)/(tc-tw)*math.pi))*(lr_max-lr_min)
     return lr_min
+
+def gradient_clipping(params, max_l2, eps=1e-6):
+    s = 0
+    for p in params:
+        if p.grad is not None:
+            s += (p.grad**2).sum()
+    if s < max_l2: return
+    f = max_l2 / (math.sqrt(s) + eps)
+    for p in params:
+        if p.grad is not None:
+            p.grad *= f

@@ -2,6 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import einx
+from .utils import softmax
 
 class Linear(nn.Module):
     def __init__(self, d_in, d_out, device=None, dtype=None):
@@ -119,7 +120,8 @@ def scaled_dot_product_attention(Q, K, V, mask):
             attn = einx.where("nq nk, ... nq nk,", mask, attn, -torch.inf)
         else:
             attn = einx.where("..., ...,", mask, attn, -torch.inf)
-    softmax_attn = einx.softmax("... nq [nk]", attn)
+    # softmax_attn = einx.softmax("... nq [nk]", attn)
+    softmax_attn = softmax(attn, dim=-1)
     res = einx.dot(
         "... nq nk, ... nk d_v -> ... nq d_v",
         softmax_attn, V
