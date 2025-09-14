@@ -9,8 +9,8 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
-from cs336_basics.llm import Linear, Embedding, RMSNorm, SwiGLU, RoPE, scaled_dot_product_attention, MultiheadSelfAttention, SiLU, TransformerBlock, Transformer
-
+from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RoPE, scaled_dot_product_attention, MultiheadSelfAttention, SiLU, TransformerBlock, Transformer
+from cs336_basics.optimizer import cross_entropy, AdamW, get_lr_cosine_schedule
 
 def run_linear(
     d_in: int,
@@ -499,7 +499,7 @@ def run_cross_entropy(
     Returns:
         Float[Tensor, ""]: The average cross-entropy loss across examples.
     """
-    raise NotImplementedError
+    return cross_entropy(inputs, targets)
 
 
 def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm: float) -> None:
@@ -518,7 +518,7 @@ def get_adamw_cls() -> Any:
     """
     Returns a torch.optim.Optimizer that implements AdamW.
     """
-    raise NotImplementedError
+    return AdamW
 
 
 def run_get_lr_cosine_schedule(
@@ -546,7 +546,7 @@ def run_get_lr_cosine_schedule(
     Returns:
         Learning rate at the given iteration under the specified schedule.
     """
-    raise NotImplementedError
+    return get_lr_cosine_schedule(it, max_learning_rate, min_learning_rate, warmup_iters, cosine_cycle_iters)
 
 
 def run_save_checkpoint(
