@@ -213,8 +213,6 @@ def run_multihead_self_attention_with_rope(
          "output_proj.weight": o_proj_weight}
     )
 
-    print(in_features.shape, token_positions.shape)
-
     return msa(in_features, token_positions)
 
 
